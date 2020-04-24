@@ -12,24 +12,23 @@ const options = yargs
 
 
 var footerTemplate = `<div style="width: 100%;">
-<span style="width: 40%; float: left; text-align: left; margin-left:1cm;" class="language">Vietnam - Vietnamese</span>
+<span style="width: 40%; float: left; text-align: left; margin-left:1cm;" class="language"></span>
 <span style="width: 40%; float: right; text-align: right; margin-right:1cm;" class="pageNumber"></span>
 </div>`;
-var time = new Date();
-var config = (options.config == undefined)? {} : JSON.parse(options.config)
-var headerTemplate = `<span style="width: 40%; float: right; text-align: right; margin-right:1cm;">${time}</span>`;
+var headerTemplate = `<span style="width: 40%; float: right; text-align: right; margin-right:1cm;">${new Date()}</span>`;
 
-config.env = 'sanbox';
-config.device = 'iPhone 8 Plus';
-config.studyName = 'kms_automation_21012020';
-config.loginName = 'testmcc15@test.com';
+var config = (options.config == undefined)? {} : JSON.parse(options.config);
+
+if (config.footerTemplate == undefined)
+    config.footerTemplate = footerTemplate;
+if (config.headerTemplate == undefined)
+config.headerTemplate = headerTemplate;
 
 (async () => {
     try {
-        config.footerTemplate = footerTemplate;
-        config.headerTemplate = headerTemplate;
-        fs.readdirSync(options.imagePath).forEach(fileName => {
-            createPDFWithLanguage(path.join(options.imagePath, fileName), config);
+        fs.readdirSync(options.imagePath).forEach(folderName => {
+            config.language = folderName;
+            createPDFWithLanguage(path.join(options.imagePath, folderName), config);
         });
 
     } catch (e) {

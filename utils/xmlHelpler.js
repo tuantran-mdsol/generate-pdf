@@ -111,20 +111,16 @@ async function createHTMLContentForLanguage(folderPath, config){
 
     });
     return body.end({ prettyPrint: true });
-
 }
 
-
-async function updateHTMLNode(htmlNode, config){
+function updateHTMLNode(htmlNode, config){
     const $ = cheerio.load(htmlNode, {
         xmlMode: true
     });
-
     if (config.language !== undefined)
         $('.language').text(config.language);
     
     return $.xml();
 }
-
 
 module.exports = { updateHTMLNode, createHTMLContentForLanguage }

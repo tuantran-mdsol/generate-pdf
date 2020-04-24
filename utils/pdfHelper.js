@@ -3,15 +3,6 @@ const { updateHTMLNode, createHTMLContentForLanguage } = require('./xmlHelpler')
 var fs = require('fs');
 
 async function createPDFWithLanguage(folderPath, config){
-    config.language = folderPath.split("/").pop();
-
-    var htmlContent = await createHTMLContentForLanguage(folderPath, config);
-    var htmlFileName = folderPath.replace("/", "-") + ".html";
-    await createHTMLFile(htmlFileName, htmlContent);
-
-    const browser = await puppeteer.launch({ headless: true });
-    const page = await browser.newPage();
-    await page.setContent(htmlContent);
 
     var footerTemplate = (config.footerTemplate == undefined) ? undefined : 
     `
@@ -27,8 +18,16 @@ async function createPDFWithLanguage(folderPath, config){
     </div>
     `;
 
-    headerTemplate = await updateHTMLNode(headerTemplate, config);
-    footerTemplate = await updateHTMLNode(footerTemplate, config);
+    headerTemplate = updateHTMLNode(headerTemplate, config);
+    footerTemplate = updateHTMLNode(footerTemplate, config);
+
+    var htmlContent = await createHTMLContentForLanguage(folderPath, config);
+    var htmlFileName = folderPath.replace("/", "-") + ".html";
+    await createHTMLFile(htmlFileName, htmlContent);
+
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+    await page.setContent(htmlContent);
 
     await page.pdf({ 
         path: `${htmlFileName.replace(".html", ".pdf")}`, 
